@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Data_logic\Data_logic.csproj" />
+    <ProjectReference Include="..\clothing_common\clothing_common.csproj" />
   </ItemGroup>
 
 </Project>

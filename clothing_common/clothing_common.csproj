@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Data_logic\Data_logic.csproj" />
-  </ItemGroup>
-
 </Project>

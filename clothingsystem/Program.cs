@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Collections.Generic; 
+using ClothingSystem.BusinessLogic;
+using ClothingSystem.Common;
+using System.Collections.Generic;
 
 namespace ClothingSystem
 {
@@ -7,55 +9,40 @@ namespace ClothingSystem
     {
         static void Main()
         {
-            ClothingStore store = new ClothingStore();
-            int userChoice;
+            ClothingService service = new ClothingService();
+            int choice;
 
             do
             {
-                DisplayActions();
-                userChoice = GetUserInput(); 
+                ShowMenu();
+                choice = GetChoice();
 
-                switch (userChoice)
+                switch (choice)
                 {
                     case 1:
-                        // Add clothing item
-                        Console.Write("Enter Clothing Brand Name: ");
+                        Console.Write("Enter Name: ");
                         string name = Console.ReadLine();
-                        Console.Write("Enter Type (Shirt, Pants, Jacket): ");
+                        Console.Write("Enter Type: (Shirt, Pants, Jacket): ");
                         string type = Console.ReadLine();
-                        Console.Write("Enter Size (S, M, L, XL): ");
+                        Console.Write("Enter Size (S, M, L, XL): "); 
                         string size = Console.ReadLine();
                         Console.Write("Enter Color: ");
                         string color = Console.ReadLine();
                         Console.Write("Enter Price: ");
-                        decimal price;
-                        if (decimal.TryParse(Console.ReadLine(), out price))
-                        {
-                            if (store.AddClothing(name, type, size, color, price))
-                            {
-                                Console.WriteLine("Clothing item added successfully!");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Failed to add clothing item. Please check your input.");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid price. Please enter a valid decimal number.");
-                        }
+                        decimal price = decimal.Parse(Console.ReadLine());
+
+                        service.AddClothing(name, type, size, color, price);
+                        Console.WriteLine("Clothing item added.");
                         break;
 
                     case 2:
-                        // Display clothing items
-                        var items = store.GetClothingItems();
+                        List<ClothingItem> items = service.GetClothingItems();
                         if (items.Count == 0)
                         {
-                            Console.WriteLine("No clothing items available.");
+                            Console.WriteLine("No items to show.");
                         }
                         else
                         {
-                            Console.WriteLine("Clothing Inventory:");
                             foreach (var item in items)
                             {
                                 item.Display();
@@ -64,35 +51,28 @@ namespace ClothingSystem
                         break;
 
                     case 3:
-                        // Remove clothing item
-                        Console.Write("Enter the name of the clothing item to remove: ");
-                        string itemName = Console.ReadLine();
-                        if (store.RemoveClothing(itemName))
-                        {
-                            Console.WriteLine("Clothing item removed successfully!");
-                        }
+                        Console.Write("Enter name to remove: ");
+                        string removeName = Console.ReadLine();
+                        if (service.RemoveClothing(removeName))
+                            Console.WriteLine("Item removed.");
                         else
-                        {
                             Console.WriteLine("Item not found.");
-                        }
                         break;
 
                     case 4:
-                        // Search by type
-                        Console.Write("Enter Clothing Type to Search: ");
+                        Console.Write("Enter type to search: ");
                         string searchType = Console.ReadLine();
-                        var foundItems = store.SearchByType(searchType);
-                        if (foundItems.Count > 0)
+                        var found = service.SearchByType(searchType);
+                        if (found.Count == 0)
                         {
-                            Console.WriteLine($"\nClothing items of type: {searchType}");
-                            foreach (var item in foundItems)
-                            {
-                                item.Display();
-                            }
+                            Console.WriteLine("No items found.");
                         }
                         else
                         {
-                            Console.WriteLine("No items found of this type.");
+                            foreach (var item in found)
+                            {
+                                item.Display();
+                            }
                         }
                         break;
 
@@ -101,32 +81,28 @@ namespace ClothingSystem
                         break;
 
                     default:
-                        Console.WriteLine("Invalid choice, try again.");
+                        Console.WriteLine("Invalid option.");
                         break;
                 }
 
-            } while (userChoice != 5);
+            } while (choice != 5);
         }
 
-        static void DisplayActions()
+        static void ShowMenu()
         {
-            Console.WriteLine("----- CLOTHING STORE MENU -----");
-            Console.WriteLine("[1] Add Clothing Item");
-            Console.WriteLine("[2] Display Clothing Items");
-            Console.WriteLine("[3] Remove Clothing Item");
+            Console.WriteLine("\n-- CLOTHING STORE MENU --");
+            Console.WriteLine("[1] Add Item");
+            Console.WriteLine("[2] Display Items");
+            Console.WriteLine("[3] Remove Item");
             Console.WriteLine("[4] Search by Type");
             Console.WriteLine("[5] Exit");
         }
 
-        static int GetUserInput() // Fixed method definition
+        static int GetChoice()
         {
-            Console.Write("Choose an option: ");
-            if (int.TryParse(Console.ReadLine(), out int choice))
-            {
-                return choice;
-            }
-            Console.WriteLine("Invalid input! Please enter a number.");
-            return 0; // Return 0 for invalid input
+            Console.Write("Choose: ");
+            int.TryParse(Console.ReadLine(), out int choice);
+            return choice;
         }
     }
 }
