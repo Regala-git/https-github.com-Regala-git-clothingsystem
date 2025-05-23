@@ -1,4 +1,6 @@
-﻿namespace ClothingSystem.Common
+﻿using System;
+
+namespace ClothingSystem.Common
 {
     public class ClothingItem
     {
@@ -10,8 +12,7 @@
 
         public void Display()
         {
-            System.Console.WriteLine($"{Name} - {Type}, Size: {Size}, Color: {Color}, Price: ₱{Price}");
+            Console.WriteLine($"{Name} | {Type} | {Size} | {Color} | ₱{Price:F2}");
         }
     }
 }
-

@@ -1,40 +1,33 @@
-﻿using ClothingSystem.Common;
-using ClothingSystem.DataLayer;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ClothingSystem.Common;
 
 namespace ClothingSystem.BusinessLogic
 {
     public class ClothingService
     {
-        private ClothingData data = new ClothingData();
+        private IClothingRepository _repo;
 
-        public bool AddClothing(string name, string type, string size, string color, decimal price)
+        public ClothingService(IClothingRepository repo)
         {
-            ClothingItem item = new ClothingItem
+            _repo = repo;
+        }
+
+        public void AddClothing(string name, string type, string size, string color, decimal price)
+        {
+            _repo.Add(new ClothingItem
             {
                 Name = name,
                 Type = type,
                 Size = size,
                 Color = color,
                 Price = price
-            };
-            data.AddItem(item);
-            return true;
+            });
         }
 
-        public List<ClothingItem> GetClothingItems()
-        {
-            return data.GetAllItems();
-        }
+        public List<ClothingItem> GetClothingItems() => _repo.GetAll();
 
-        public bool RemoveClothing(string name)
-        {
-            return data.RemoveItem(name);
-        }
+        public bool RemoveClothing(string name) => _repo.Remove(name);
 
-        public List<ClothingItem> SearchByType(string type)
-        {
-            return data.SearchByType(type);
-        }
+        public List<ClothingItem> SearchByType(string type) => _repo.SearchByType(type);
     }
 }
