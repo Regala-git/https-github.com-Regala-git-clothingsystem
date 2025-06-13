@@ -1,33 +1,53 @@
-﻿using System.Collections.Generic;
-using ClothingSystem.Common;
+﻿using ClothingSystem.Common;
+using ClothingSystem.DataLogic;
+using System.Collections.Generic;
 
-namespace ClothingSystem.BusinessLogic
+namespace ClothingSystem
 {
-    public class ClothingService
+    public class Clothingstore
     {
-        private IClothingRepository _repo;
+        private IClothingRepository _repository;
 
-        public ClothingService(IClothingRepository repo)
+        public Clothingstore(IClothingRepository repository)
         {
-            _repo = repo;
+            _repository = repository;
         }
 
-        public void AddClothing(string name, string type, string size, string color, decimal price)
+        public void AddClothing(string customerName, string type, string size, string color, decimal price)
         {
-            _repo.Add(new ClothingItem
+            var item = new ClothingItem
             {
-                Name = name,
+                CustomerName = customerName,
                 Type = type,
                 Size = size,
                 Color = color,
                 Price = price
-            });
+            };
+            _repository.AddItem(item);
         }
 
-        public List<ClothingItem> GetClothingItems() => _repo.GetAll();
+        public List<ClothingItem> GetClothingItems()
+        {
+   
+            return _repository.GetAllItems();
+        }
 
-        public bool RemoveClothing(string name) => _repo.Remove(name);
+        public bool RemoveClothing(string name)
+        {
+            return _repository.RemoveItem(name);
+        }
 
-        public List<ClothingItem> SearchByType(string type) => _repo.SearchByType(type);
+        public List<ClothingItem> SearchByType(string type)
+        {
+            return _repository.SearchByType(type);
+        }
+
+        public void DisplayItems(List<ClothingItem> items)
+        {
+            foreach (var item in items)
+            {
+                item.Display();
+            }
+        }
     }
 }

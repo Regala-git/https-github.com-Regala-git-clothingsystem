@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ClothingSystem.Common;
 
+
 namespace ClothingSystem.DataLayer
 {
     public class ClothingData
@@ -14,12 +15,14 @@ namespace ClothingSystem.DataLayer
 
         public List<ClothingItem> GetAllItems()
         {
-            return inventory;
+            return new List<ClothingItem>(inventory);
         }
 
-        public bool RemoveItem(string name)
+        public bool RemoveItem(string CustomerName)
         {
-            ClothingItem item = inventory.Find(i => i.Name.ToLower() == name.ToLower());
+            ClothingItem item = inventory.Find(i =>
+                i.CustomerName.Equals(CustomerName, System.StringComparison.OrdinalIgnoreCase));
+
             if (item != null)
             {
                 inventory.Remove(item);
@@ -30,7 +33,8 @@ namespace ClothingSystem.DataLayer
 
         public List<ClothingItem> SearchByType(string type)
         {
-            return inventory.FindAll(i => i.Type.ToLower() == type.ToLower());
+            return inventory.FindAll(i =>
+                i.Type.Equals(type, System.StringComparison.OrdinalIgnoreCase));
         }
     }
 }

@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\clothing_common\clothing_common.csproj" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\clothing_common\clothing_common.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
 ﻿using System;
-using ClothingSystem.BusinessLogic;
 using ClothingSystem.Common;
 using ClothingSystem.DataLogic;
 using System.Collections.Generic;
@@ -10,8 +9,8 @@ namespace ClothingSystem
     {
         static void Main()
         {
-            IClothingRepository repo = new TextFileRepository();
-            ClothingService service = new ClothingService(repo);
+            IClothingRepository repo = new JsonFileRepository();
+            Clothingstore store = new Clothingstore(repo);
             int choice;
 
             do
@@ -22,16 +21,16 @@ namespace ClothingSystem
                 switch (choice)
                 {
                     case 1:
-                        AddItem(service);
+                        AddItem(store);
                         break;
                     case 2:
-                        DisplayItems(service);
+                        DisplayItems(store);
                         break;
                     case 3:
-                        RemoveItem(service);
+                        RemoveItem(store);
                         break;
                     case 4:
-                        SearchItems(service);
+                        SearchItems(store);
                         break;
                     case 5:
                         Console.WriteLine("Exiting...");
@@ -44,7 +43,7 @@ namespace ClothingSystem
             } while (choice != 5);
         }
 
- 
+
 
         static void ShowMenu()
         {
@@ -63,15 +62,15 @@ namespace ClothingSystem
             return choice;
         }
 
-        static void AddItem(ClothingService service)
+        static void AddItem(Clothingstore store)
         {
-            Console.Write("Enter Name: ");
-            string name = Console.ReadLine();
-            Console.Write("Enter Type (Shirt, Pants, Jacket): ");
+            Console.Write("Enter Customer Name: ");
+            string CustomerName = Console.ReadLine();
+            Console.Write("Enter Your Type Clothing: (Shirt, Pants, Jacket, Tops): ");
             string type = Console.ReadLine();
-            Console.Write("Enter Size (S, M, L, XL): ");
+            Console.Write("Enter Size :(S, M, L, XL): ");
             string size = Console.ReadLine();
-            Console.Write("Enter Color: ");
+            Console.Write("Enter the Color you Want: ");
             string color = Console.ReadLine();
             Console.Write("Enter Price: ");
             if (!decimal.TryParse(Console.ReadLine(), out decimal price) || price < 0)
@@ -80,13 +79,13 @@ namespace ClothingSystem
                 return;
             }
 
-            service.AddClothing(name, type, size, color, price);
+            store.AddClothing(CustomerName, type, size, color, price);
             Console.WriteLine("Clothing item added.");
         }
 
-        static void DisplayItems(ClothingService service)
+        static void DisplayItems(Clothingstore store)
         {
-            var items = service.GetClothingItems();
+            var items = store.GetClothingItems();
             if (items.Count == 0)
             {
                 Console.WriteLine("No items to show.");
@@ -94,26 +93,26 @@ namespace ClothingSystem
             }
 
             foreach (var item in items)
-            {
-                item.Display();
-            }
-        }
 
-        static void RemoveItem(ClothingService service)
+                store.DisplayItems(items);
+        }
+    
+
+        static void RemoveItem(Clothingstore store)
         {
             Console.Write("Enter name to remove: ");
             string name = Console.ReadLine();
-            if (service.RemoveClothing(name))
+            if (store.RemoveClothing(name))
                 Console.WriteLine("Item removed.");
             else
                 Console.WriteLine("Item not found.");
         }
 
-        static void SearchItems(ClothingService service)
+        static void SearchItems(Clothingstore store)
         {
             Console.Write("Enter type to search: ");
             string type = Console.ReadLine();
-            var results = service.SearchByType(type);
+            var results = store.SearchByType(type);
 
             if (results.Count == 0)
             {

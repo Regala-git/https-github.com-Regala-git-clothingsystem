@@ -4,7 +4,7 @@ namespace ClothingSystem.Common
 {
     public class ClothingItem
     {
-        public string Name { get; set; }
+        public string CustomerName { get; set; }
         public string Type { get; set; }
         public string Size { get; set; }
         public string Color { get; set; }
@@ -12,7 +12,7 @@ namespace ClothingSystem.Common
 
         public void Display()
         {
-            Console.WriteLine($"{Name} | {Type} | {Size} | {Color} | ₱{Price:F2}");
+            Console.WriteLine($"Name: {CustomerName}, Type: {Type}, Size: {Size}, Color: {Color}, Price: {Price:C}");
         }
     }
-}
+}  

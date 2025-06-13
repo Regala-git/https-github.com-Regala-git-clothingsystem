@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System;
 using ClothingSystem.Common;
 
 namespace ClothingSystem.DataLogic
@@ -8,13 +8,19 @@ namespace ClothingSystem.DataLogic
     {
         private List<ClothingItem> items = new List<ClothingItem>();
 
-        public void Add(ClothingItem item) => items.Add(item);
-
-        public List<ClothingItem> GetAll() => new List<ClothingItem>(items);
-
-        public bool Remove(string name)
+        public void AddItem(ClothingItem item)
         {
-            var item = items.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
+            items.Add(item);
+        }
+
+        public List<ClothingItem> GetAllItems()
+        {
+            return new List<ClothingItem>(items);
+        }
+
+        public bool RemoveItem(string CustomerName)
+        {
+            var item = items.Find(i => i.CustomerName.Equals(CustomerName, StringComparison.OrdinalIgnoreCase));
             if (item != null)
             {
                 items.Remove(item);
@@ -25,7 +31,7 @@ namespace ClothingSystem.DataLogic
 
         public List<ClothingItem> SearchByType(string type)
         {
-            return items.Where(i => i.Type.ToLower() == type.ToLower()).ToList();
+            return items.FindAll(i => i.Type.Equals(type, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

@@ -1,36 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using ClothingSystem.Common;
 
 namespace ClothingSystem.DataLogic
 {
     public class TextFileRepository : IClothingRepository
     {
-        private string filePath = "clothing.txt";
-        private List<ClothingItem> items = new List<ClothingItem>();
+        private readonly string filePath = "clothing.txt";
 
-        public TextFileRepository()
+        public void AddItem(ClothingItem item)
         {
-            Load();
+            using (StreamWriter writer = new StreamWriter(filePath, true))
+            {
+                writer.WriteLine($"{item.CustomerName}|{item.Type}|{item.Size}|{item.Color}|{item.Price}");
+            }
         }
 
-        public void Add(ClothingItem item)
+        public List<ClothingItem> GetAllItems()
         {
-            items.Add(item);
-            Save();
+            var items = new List<ClothingItem>();
+            if (!File.Exists(filePath)) return items;
+
+            var lines = File.ReadAllLines(filePath);
+            foreach (var line in lines)
+            {
+                var parts = line.Split('|');
+                if (parts.Length == 5)
+                {
+                    items.Add(new ClothingItem
+                    {
+                        CustomerName = parts[0],
+                        Type = parts[1],
+                        Size = parts[2],
+                        Color = parts[3],
+                        Price = decimal.TryParse(parts[4], out decimal price) ? price : 0
+                    });
+                }
+            }
+
+            return items;
         }
 
-        public List<ClothingItem> GetAll() => items;
-
-        public bool Remove(string name)
+        public bool RemoveItem(string customerName)
         {
-            var item = items.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
+            var items = GetAllItems();
+            var item = items.Find(i => i.CustomerName.Equals(customerName, StringComparison.OrdinalIgnoreCase));
             if (item != null)
             {
                 items.Remove(item);
-                Save();
+                SaveAllItems(items);
                 return true;
             }
             return false;
@@ -38,35 +57,20 @@ namespace ClothingSystem.DataLogic
 
         public List<ClothingItem> SearchByType(string type)
         {
-            return items.Where(i => i.Type.ToLower() == type.ToLower()).ToList();
+            var items = GetAllItems();
+            return items.FindAll(i => i.Type.Equals(type, StringComparison.OrdinalIgnoreCase));
         }
 
-        private void Load()
+        private void SaveAllItems(List<ClothingItem> items)
         {
-            if (!File.Exists(filePath)) return;
-
-            var lines = File.ReadAllLines(filePath);
-            foreach (var line in lines)
+            using (StreamWriter writer = new StreamWriter(filePath, false))
             {
-                var parts = line.Split(',');
-                if (parts.Length == 5 && decimal.TryParse(parts[4], out decimal price))
+                foreach (var item in items)
                 {
-                    items.Add(new ClothingItem
-                    {
-                        Name = parts[0],
-                        Type = parts[1],
-                        Size = parts[2],
-                        Color = parts[3],
-                        Price = price
-                    });
+                    writer.WriteLine($"{item.CustomerName}|{item.Type}|{item.Size}|{item.Color}|{item.Price}");
                 }
             }
         }
-
-        private void Save()
-        {
-            var lines = items.Select(i => $"{i.Name},{i.Type},{i.Size},{i.Color},{i.Price}");
-            File.WriteAllLines(filePath, lines);
-        }
     }
 }
+

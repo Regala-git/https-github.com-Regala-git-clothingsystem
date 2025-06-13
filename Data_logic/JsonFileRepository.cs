@@ -1,36 +1,37 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using System.Linq;
 using ClothingSystem.Common;
 
 namespace ClothingSystem.DataLogic
 {
     public class JsonFileRepository : IClothingRepository
     {
-        private string filePath = "clothing.json";
-        private List<ClothingItem> items = new List<ClothingItem>();
+        private readonly string filePath = "clothing.json";
 
-        public JsonFileRepository()
+        public void AddItem(ClothingItem item)
         {
-            Load();
-        }
-
-        public void Add(ClothingItem item)
-        {
+            var items = GetAllItems();
             items.Add(item);
-            Save();
+            SaveAllItems(items);
         }
 
-        public List<ClothingItem> GetAll() => items;
-
-        public bool Remove(string name)
+        public List<ClothingItem> GetAllItems()
         {
-            var item = items.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
+            if (!File.Exists(filePath)) return new List<ClothingItem>();
+
+            string json = File.ReadAllText(filePath);
+            return JsonSerializer.Deserialize<List<ClothingItem>>(json) ?? new List<ClothingItem>();
+        }
+
+        public bool RemoveItem(string CustomerName)
+        {
+            var items = GetAllItems();
+            var item = items.Find(i => i.CustomerName.Equals(CustomerName, StringComparison.OrdinalIgnoreCase));
             if (item != null)
             {
                 items.Remove(item);
-                Save();
+                SaveAllItems(items);
                 return true;
             }
             return false;
@@ -38,22 +39,15 @@ namespace ClothingSystem.DataLogic
 
         public List<ClothingItem> SearchByType(string type)
         {
-            return items.Where(i => i.Type.ToLower() == type.ToLower()).ToList();
+            var items = GetAllItems();
+            return items.FindAll(i => i.Type.Equals(type, StringComparison.OrdinalIgnoreCase));
         }
 
-        private void Load()
+        private void SaveAllItems(List<ClothingItem> items)
         {
-            if (File.Exists(filePath))
-            {
-                var json = File.ReadAllText(filePath);
-                items = JsonSerializer.Deserialize<List<ClothingItem>>(json) ?? new List<ClothingItem>();
-            }
-        }
-
-        private void Save()
-        {
-            var json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(filePath, json);
         }
     }
 }
+
