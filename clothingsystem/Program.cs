@@ -1,125 +1,170 @@
 ﻿using System;
+using System.Collections.Generic;
 using ClothingSystem.Common;
 using ClothingSystem.DataLogic;
-using System.Collections.Generic;
+using ClothingSystem.BusinessLogic;
 
 namespace ClothingSystem
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        static string[] actions = new string[]
         {
-            IClothingRepository repo = new JsonFileRepository();
-            Clothingstore store = new Clothingstore(repo);
-            int choice;
+            "[1] Add Item", "[2] View Items", "[3] Remove Item","[4] Search by Type","[5] Exit"
+        };
 
-            do
+        static IClothingDataService dataService = new DbDataService();
+        static Clothingstore store = new Clothingstore(dataService);
+
+        static void Main(string[] args)
+        {
+
+            Console.WriteLine("CLOTHING STORE SYSTEM");
+
+            DisplayActions();
+            int userChoice = GetUserInput();
+
+            while (userChoice != 5)
             {
-                ShowMenu();
-                choice = GetChoice();
-
-                switch (choice)
+                switch (userChoice)
                 {
                     case 1:
-                        AddItem(store);
+                        AddItem();
                         break;
                     case 2:
-                        DisplayItems(store);
+                        ViewItems();
                         break;
                     case 3:
-                        RemoveItem(store);
+                        RemoveItem();
                         break;
                     case 4:
-                        SearchItems(store);
+                        SearchItems();
                         break;
                     case 5:
-                        Console.WriteLine("Exiting...");
+                        Console.WriteLine("Exiting..");
                         break;
                     default:
-                        Console.WriteLine("Invalid option.");
+                        Console.WriteLine("Invalid choice. Please choose between 1 to 5 only.");
                         break;
                 }
 
-            } while (choice != 5);
+                DisplayActions();
+                userChoice = GetUserInput();
+            }
         }
 
-
-
-        static void ShowMenu()
+        static void DisplayActions()
         {
-            Console.WriteLine("-- CLOTHING STORE MENU --");
-            Console.WriteLine("[1] Add Item");
-            Console.WriteLine("[2] Display Items");
-            Console.WriteLine("[3] Remove Item");
-            Console.WriteLine("[4] Search by Type");
-            Console.WriteLine("[5] Exit");
+            Console.WriteLine("----------------------");
+            Console.WriteLine("MENU");
+          
+
+            foreach (var action in actions)
+            {
+                Console.WriteLine(action);
+            }
         }
 
-        static int GetChoice()
+        static int GetUserInput()
         {
-            Console.Write("Choose: ");
-            int.TryParse(Console.ReadLine(), out int choice);
-            return choice;
+            Console.Write("Choose an option: ");
+            string input = Console.ReadLine();
+            return int.TryParse(input, out int value) ? value : -1;
         }
 
-        static void AddItem(Clothingstore store)
+        static void AddItem()
         {
-            Console.Write("Enter Customer Name: ");
-            string CustomerName = Console.ReadLine();
-            Console.Write("Enter Your Type Clothing: (Shirt, Pants, Jacket, Tops): ");
+            Console.WriteLine("--- ADD CLOTHING ITEM ---");
+
+            Console.Write("Customer Name: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Clothing Type: (Shirt, Pants, Jacket, Tops, Dress): ");
             string type = Console.ReadLine();
-            Console.Write("Enter Size :(S, M, L, XL): ");
+
+            Console.Write("Clothing Size: (S, M, L, XL): ");
             string size = Console.ReadLine();
-            Console.Write("Enter the Color you Want: ");
+
+            Console.Write("Clothing Color: ");
             string color = Console.ReadLine();
-            Console.Write("Enter Price: ");
+
+            Console.Write("Ask Price Owner: ");
             if (!decimal.TryParse(Console.ReadLine(), out decimal price) || price < 0)
             {
                 Console.WriteLine("Invalid price.");
                 return;
             }
 
-            store.AddClothing(CustomerName, type, size, color, price);
-            Console.WriteLine("Clothing item added.");
-        }
-
-        static void DisplayItems(Clothingstore store)
-        {
-            var items = store.GetClothingItems();
-            if (items.Count == 0)
+            var item = new ClothingItem
             {
-                Console.WriteLine("No items to show.");
-                return;
+                CustomerName = name,
+                Type = type,
+                Size = size,
+                Color = color,
+                Price = price
+            };
+
+            bool added = store.AddItem(item);
+
+            if (added)
+            {
+                Console.WriteLine("Item successfully added.");
             }
-
-            foreach (var item in items)
-
-                store.DisplayItems(items);
-        }
-    
-
-        static void RemoveItem(Clothingstore store)
-        {
-            Console.Write("Enter name to remove: ");
-            string name = Console.ReadLine();
-            if (store.RemoveClothing(name))
-                Console.WriteLine("Item removed.");
             else
-                Console.WriteLine("Item not found.");
+            {
+                Console.WriteLine("Item already exists for this customer.");
+            }
         }
 
-        static void SearchItems(Clothingstore store)
+        static void ViewItems()
         {
-            Console.Write("Enter type to search: ");
-            string type = Console.ReadLine();
-            var results = store.SearchByType(type);
+            Console.WriteLine("--- CLOTHING ITEMS ---");
 
-            if (results.Count == 0)
+            var items = store.GetAllItems();
+
+            if (items.Count == 0)
             {
                 Console.WriteLine("No items found.");
                 return;
             }
 
+            foreach (var item in items)
+            {
+                item.Display();
+            }
+        }
+
+        static void RemoveItem()
+        {
+            Console.Write("Enter Customer Name to remove: ");
+            string name = Console.ReadLine();
+
+            bool removed = store.RemoveItem(name);
+
+            if (removed)
+            {
+                Console.WriteLine("Item removed.");
+            }
+            else
+            {
+                Console.WriteLine("No item found with that name.");
+            }
+        }
+
+        static void SearchItems()
+        {
+            Console.Write("Enter clothing type to search: ");
+            string type = Console.ReadLine();
+
+            var results = store.SearchByType(type);
+
+            if (results.Count == 0)
+            {
+                Console.WriteLine("No matching items found.");
+                return;
+            }
+
+            Console.WriteLine($"Items found for type '{type}':");
             foreach (var item in results)
             {
                 item.Display();

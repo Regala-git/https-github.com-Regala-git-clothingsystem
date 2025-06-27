@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using ClothingSystem.Common;
 
-
 namespace ClothingSystem.DataLayer
 {
-    public class ClothingData
+    public class ClothingDataService
     {
         private List<ClothingItem> inventory = new List<ClothingItem>();
 
@@ -18,16 +17,17 @@ namespace ClothingSystem.DataLayer
             return new List<ClothingItem>(inventory);
         }
 
-        public bool RemoveItem(string CustomerName)
+        public bool RemoveItem(string customerName)
         {
             ClothingItem item = inventory.Find(i =>
-                i.CustomerName.Equals(CustomerName, System.StringComparison.OrdinalIgnoreCase));
+                i.CustomerName.Equals(customerName, System.StringComparison.OrdinalIgnoreCase));
 
             if (item != null)
             {
                 inventory.Remove(item);
                 return true;
             }
+
             return false;
         }
 

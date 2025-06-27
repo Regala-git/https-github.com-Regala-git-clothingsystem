@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
-using ClothingSystem.Common;
 
-namespace ClothingSystem.DataLogic
+namespace ClothingSystem.Common
 {
-    public interface IClothingRepository
+    public interface IClothingDataService
     {
         void AddItem(ClothingItem item);
         List<ClothingItem> GetAllItems();
-        bool RemoveItem(string CustomerName);
         List<ClothingItem> SearchByType(string type);
+        bool RemoveItem(string customerName);
+        bool Exists(string customerName);
     }
 }
+

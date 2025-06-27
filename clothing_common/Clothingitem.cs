@@ -12,7 +12,9 @@ namespace ClothingSystem.Common
 
         public void Display()
         {
-            Console.WriteLine($"Name: {CustomerName}, Type: {Type}, Size: {Size}, Color: {Color}, Price: {Price:C}");
+            Console.WriteLine(
+                $"Name: {CustomerName}, Type: {Type}, Size: {Size}, Color: {Color}, Price: {Price:C}"
+            );
         }
     }
-}  
+}
