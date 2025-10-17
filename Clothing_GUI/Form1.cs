@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ClothingSystem.Common;
+using ClothingSystem.BusinessLogic;
 using ClothingSystem.DataLogic;
 
 namespace ClothingSystem.GUI
@@ -9,6 +10,8 @@ namespace ClothingSystem.GUI
     public partial class Form1 : Form
     {
         private DbDataService repo = new DbDataService();
+        private readonly EmailService emailService = new EmailService();
+
 
         public Form1()
         {
@@ -99,5 +102,29 @@ namespace ClothingSystem.GUI
         {
 
         }
+       
+        private void btnEmail_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string toEmail = "yourstore@gmail.com"; 
+                string subject = "New Clothing Item Added";
+                string message = $"A new item was added by {txtName.Text}:\n" +
+                                 $"Type: {txtType.Text}\n" +
+                                 $"Color: {txtColor.Text}\n" +
+                                 $"Size: {txtSize.Text}\n" +
+                                 $"Price: {txtPrice.Text}\n" +
+                                 $"Clothing Store System";
+
+                emailService.SendNotification(toEmail, subject, message);
+                MessageBox.Show("Notification email sent successfully!", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to send email: " + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
-}
+    }

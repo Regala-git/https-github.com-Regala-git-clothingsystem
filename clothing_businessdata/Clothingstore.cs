@@ -7,10 +7,13 @@ namespace ClothingSystem.BusinessLogic
     public class Clothingstore
     {
         private readonly IClothingDataService repo;
+        private readonly EmailService emailService;
 
+       
         public Clothingstore(IClothingDataService repository)
         {
             repo = repository;
+            emailService = new EmailService();
         }
 
         public bool AddItem(ClothingItem item)
@@ -18,7 +21,14 @@ namespace ClothingSystem.BusinessLogic
             if (!repo.Exists(item.CustomerName))
             {
                 repo.AddItem(item);
-                return true;
+
+                string subject = "Clothing Item Added";
+                string message = $"Dear {item.CustomerName},\n\nYour item ({item.Type}, {item.Color}, {item.Size}) " +
+                                 $"has been successfully added to the Clothing Store System.\n\nThank you!";
+
+                bool emailSent = emailService.SendNotification(item.Email, subject, message);
+
+                return emailSent; 
             }
             return false;
         }

@@ -41,7 +41,7 @@ namespace ClothingSystem
                         SearchItems();
                         break;
                     case 5:
-                        Console.WriteLine("Exiting..");
+                        Console.WriteLine("Exiting");
                         break;
                     default:
                         Console.WriteLine("Invalid choice. Please choose between 1 to 5 only.");

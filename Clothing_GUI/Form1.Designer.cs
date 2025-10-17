@@ -38,6 +38,7 @@
             lblColor = new Label();
             lblPrice = new Label();
             button1 = new Button();
+            btnEmail = new Button();
             SuspendLayout();
             // 
             // txtName
@@ -144,11 +145,13 @@
             // 
             lblName.BackColor = Color.Transparent;
             lblName.Font = new Font("Gill Sans Ultra Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblName.ForeColor = SystemColors.ControlText;
             lblName.Location = new Point(12, 28);
             lblName.Name = "lblName";
             lblName.Size = new Size(200, 27);
             lblName.TabIndex = 5;
             lblName.Text = "CustomerName";
+            lblName.TextAlign = ContentAlignment.TopRight;
             lblName.Click += lblName_Click;
             // 
             // lblType
@@ -161,6 +164,7 @@
             lblType.Size = new Size(199, 31);
             lblType.TabIndex = 6;
             lblType.Text = "Clothing Type";
+            lblType.TextAlign = ContentAlignment.TopRight;
             // 
             // lblSize
             // 
@@ -171,6 +175,7 @@
             lblSize.Size = new Size(200, 31);
             lblSize.TabIndex = 7;
             lblSize.Text = "Clothing Size";
+            lblSize.TextAlign = ContentAlignment.TopRight;
             // 
             // lblColor
             // 
@@ -181,6 +186,7 @@
             lblColor.Size = new Size(199, 31);
             lblColor.TabIndex = 8;
             lblColor.Text = "Clothing Color";
+            lblColor.TextAlign = ContentAlignment.TopRight;
             lblColor.Click += lblColor_Click;
             // 
             // lblPrice
@@ -192,6 +198,7 @@
             lblPrice.Size = new Size(199, 31);
             lblPrice.TabIndex = 9;
             lblPrice.Text = "Ask Price Owner";
+            lblPrice.TextAlign = ContentAlignment.TopRight;
             lblPrice.Click += lblPrice_Click;
             // 
             // button1
@@ -206,11 +213,24 @@
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
             // 
+            // btnEmail
+            // 
+            btnEmail.BackColor = Color.PeachPuff;
+            btnEmail.Font = new Font("Stencil", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnEmail.Location = new Point(12, 388);
+            btnEmail.Name = "btnEmail";
+            btnEmail.Size = new Size(98, 39);
+            btnEmail.TabIndex = 16;
+            btnEmail.Text = "Send Email";
+            btnEmail.UseVisualStyleBackColor = false;
+            btnEmail.Click += btnEmail_Click;
+            // 
             // Form1
             // 
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(500, 430);
+            Controls.Add(btnEmail);
             Controls.Add(button1);
             Controls.Add(txtName);
             Controls.Add(txtType);
@@ -233,5 +253,6 @@
             PerformLayout();
         }
         private Button button1;
+        private Button btnEmail;
     }
 }

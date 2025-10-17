@@ -9,11 +9,12 @@ namespace ClothingSystem.Common
         public string Size { get; set; }
         public string Color { get; set; }
         public decimal Price { get; set; }
+        public string Email { get; set; } 
 
         public void Display()
         {
             Console.WriteLine(
-                $"Name: {CustomerName}, Type: {Type}, Size: {Size}, Color: {Color}, Price: {Price:C}"
+                $"Name: {CustomerName}, Email: {Email}, Type: {Type}, Size: {Size}, Color: {Color}, Price: {Price:C}"
             );
         }
     }
