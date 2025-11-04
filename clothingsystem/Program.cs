@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ClothingSystem.Common;
 using ClothingSystem.DataLogic;
 using ClothingSystem.BusinessLogic;
+using Microsoft.Extensions.Options;
 
 namespace ClothingSystem
 {
@@ -13,15 +14,30 @@ namespace ClothingSystem
             "[1] Add Item", "[2] View Items", "[3] Remove Item","[4] Search by Type","[5] Exit"
         };
 
+  
         static IClothingDataService dataService = new DbDataService();
-        static Clothingstore store = new Clothingstore(dataService);
+
+        static EmailSettings emailSettings = new EmailSettings
+        {
+            FromName = "Clothing Store System",
+            FromAddress = "yourstoreemail@gmail.com",
+            ToName = "Customer",
+            ToAddress = "customer@gmail.com",
+            SmtpHost = "smtp.gmail.com",
+            SmtpPort = 587,
+            SmtpUsername = "yourstoreemail@gmail.com",
+            SmtpPassword = "your_app_password", 
+            EnableTls = true
+        };
+
+      
+        static Clothingstore store = new Clothingstore(dataService, Options.Create(emailSettings));
 
         static void Main(string[] args)
         {
-
             Console.WriteLine("CLOTHING STORE SYSTEM");
-
             DisplayActions();
+
             int userChoice = GetUserInput();
 
             while (userChoice != 5)
@@ -40,9 +56,6 @@ namespace ClothingSystem
                     case 4:
                         SearchItems();
                         break;
-                    case 5:
-                        Console.WriteLine("Exiting");
-                        break;
                     default:
                         Console.WriteLine("Invalid choice. Please choose between 1 to 5 only.");
                         break;
@@ -51,14 +64,14 @@ namespace ClothingSystem
                 DisplayActions();
                 userChoice = GetUserInput();
             }
+
+            Console.WriteLine("Exiting program...");
         }
 
         static void DisplayActions()
         {
-            Console.WriteLine("----------------------");
+            Console.WriteLine("\n----------------------");
             Console.WriteLine("MENU");
-          
-
             foreach (var action in actions)
             {
                 Console.WriteLine(action);
@@ -74,19 +87,22 @@ namespace ClothingSystem
 
         static void AddItem()
         {
-            Console.WriteLine("--- ADD CLOTHING ITEM ---");
+            Console.WriteLine("\n--- ADD CLOTHING ITEM ---");
 
             Console.Write("Customer Name: ");
             string name = Console.ReadLine();
 
-            Console.Write("Clothing Type: (Shirt, Pants, Jacket, Tops, Dress): ");
+            Console.Write("Clothing Type (Shirt, Pants, Jacket, Tops, Dress): ");
             string type = Console.ReadLine();
 
-            Console.Write("Clothing Size: (S, M, L, XL): ");
+            Console.Write("Clothing Size (S, M, L, XL): ");
             string size = Console.ReadLine();
 
             Console.Write("Clothing Color: ");
             string color = Console.ReadLine();
+
+            Console.Write("Customer Email: ");
+            string email = Console.ReadLine();
 
             Console.Write("Ask Price Owner: ");
             if (!decimal.TryParse(Console.ReadLine(), out decimal price) || price < 0)
@@ -101,6 +117,7 @@ namespace ClothingSystem
                 Type = type,
                 Size = size,
                 Color = color,
+                Email = email,
                 Price = price
             };
 
@@ -108,7 +125,7 @@ namespace ClothingSystem
 
             if (added)
             {
-                Console.WriteLine("Item successfully added.");
+                Console.WriteLine("Item successfully added. Notification email sent!");
             }
             else
             {
@@ -118,8 +135,7 @@ namespace ClothingSystem
 
         static void ViewItems()
         {
-            Console.WriteLine("--- CLOTHING ITEMS ---");
-
+            Console.WriteLine("\n--- CLOTHING ITEMS ---");
             var items = store.GetAllItems();
 
             if (items.Count == 0)
@@ -136,7 +152,7 @@ namespace ClothingSystem
 
         static void RemoveItem()
         {
-            Console.Write("Enter Customer Name to remove: ");
+            Console.Write("\nEnter Customer Name to remove: ");
             string name = Console.ReadLine();
 
             bool removed = store.RemoveItem(name);
@@ -153,7 +169,7 @@ namespace ClothingSystem
 
         static void SearchItems()
         {
-            Console.Write("Enter clothing type to search: ");
+            Console.Write("\nEnter clothing type to search: ");
             string type = Console.ReadLine();
 
             var results = store.SearchByType(type);

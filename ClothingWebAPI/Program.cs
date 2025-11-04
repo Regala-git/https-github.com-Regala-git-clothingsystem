@@ -1,10 +1,21 @@
+using ClothingSystem.BusinessLogic;
+using ClothingSystem.Common;
+using ClothingSystem.DataLogic;
+using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
-// configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings")
+);
+
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddTransient<IClothingDataService, DbDataService>();
+builder.Services.AddTransient<Clothingstore>();
 
 var app = builder.Build();
 
@@ -15,9 +26,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+

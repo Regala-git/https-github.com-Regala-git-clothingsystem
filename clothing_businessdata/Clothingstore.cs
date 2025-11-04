@@ -1,6 +1,7 @@
 ﻿using ClothingSystem.Common;
 using ClothingSystem.DataLogic;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 
 namespace ClothingSystem.BusinessLogic
 {
@@ -9,11 +10,10 @@ namespace ClothingSystem.BusinessLogic
         private readonly IClothingDataService repo;
         private readonly EmailService emailService;
 
-       
-        public Clothingstore(IClothingDataService repository)
+        public Clothingstore(IClothingDataService repository, IOptions<EmailSettings> emailSettings)
         {
             repo = repository;
-            emailService = new EmailService();
+            emailService = new EmailService(emailSettings);
         }
 
         public bool AddItem(ClothingItem item)
@@ -22,13 +22,10 @@ namespace ClothingSystem.BusinessLogic
             {
                 repo.AddItem(item);
 
-                string subject = "Clothing Item Added";
-                string message = $"Dear {item.CustomerName},\n\nYour item ({item.Type}, {item.Color}, {item.Size}) " +
-                                 $"has been successfully added to the Clothing Store System.\n\nThank you!";
+                // Send email notification
+                emailService.SendEmail(item.CustomerName);
 
-                bool emailSent = emailService.SendNotification(item.Email, subject, message);
-
-                return emailSent; 
+                return true;
             }
             return false;
         }

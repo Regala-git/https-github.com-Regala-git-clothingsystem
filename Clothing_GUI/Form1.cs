@@ -10,7 +10,7 @@ namespace ClothingSystem.GUI
     public partial class Form1 : Form
     {
         private DbDataService repo = new DbDataService();
-        private readonly EmailService emailService = new EmailService();
+
 
 
         public Form1()
@@ -116,7 +116,6 @@ namespace ClothingSystem.GUI
                                  $"Price: {txtPrice.Text}\n" +
                                  $"Clothing Store System";
 
-                emailService.SendNotification(toEmail, subject, message);
                 MessageBox.Show("Notification email sent successfully!", "Success",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
